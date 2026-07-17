@@ -1,0 +1,24 @@
+export type Bookmark = {
+  id: string;
+  user_id: string;
+  video_id: string;
+  url: string;
+  title: string | null;
+  thumbnail: string | null;
+  tags: string[] | null;
+  tags_en: string[] | null;
+  tags_ai: string[] | null;
+  tags_ai_en: string[] | null;
+  user_tags: string[] | null;
+  description_summary: string | null;
+  video_summary: string | null;
+  category: string | null;
+  channel_name: string | null;
+  ai_status: 'pending' | 'done' | 'failed';
+  is_trashed: boolean;
+  created_at: string;
+  published_at: string | null;
+  duration_seconds: number | null;
+  description: string | null;
+  rating: number | null;
+};
