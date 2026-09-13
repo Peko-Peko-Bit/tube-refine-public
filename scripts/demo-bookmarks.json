@@ -1,0 +1,107 @@
+{
+  "_readme": [
+    "Curated source list for the guest demo fixture. Hand-maintained.",
+    "Order matters: it becomes the order shown in the app (newest first).",
+    "'addedHoursAgo' must increase strictly down the list; export-demo-bookmarks.mjs enforces that.",
+    "'title' is a human-readable check only — the export refuses to run if it no longer matches the row.",
+    "Everything else (tags, summaries, metadata) is read from the database, not written here.",
+    "Run: node scripts/export-demo-bookmarks.mjs  ->  data/demo/bookmarks.json"
+  ],
+  "items": [
+    {
+      "videoId": "tecqkYnpHBI",
+      "addedHoursAgo": 14,
+      "rating": 80,
+      "userTags": ["español"],
+      "title": "El enigma abisal"
+    },
+    {
+      "videoId": "1VNXLUpdm0M",
+      "addedHoursAgo": 38,
+      "title": "I Built a Working LEGO James Bond Gun Barrel Scene"
+    },
+    {
+      "videoId": "7g916O844kg",
+      "addedHoursAgo": 46,
+      "title": "「文化はどれも尊い」って、本当？"
+    },
+    {
+      "videoId": "9bYwyTrL5rA",
+      "addedHoursAgo": 79,
+      "title": "【エアコン保有率20％】なぜ熱波のヨーロッパでエアコンは普及しないのか？"
+    },
+    {
+      "videoId": "svYdjgvZB5o",
+      "addedHoursAgo": 91,
+      "title": "「日本人は難しいリズム」海外に通用するために知っておきたいビート"
+    },
+    {
+      "videoId": "iuc94fjnsaY",
+      "addedHoursAgo": 110,
+      "title": "【考察】赤ペン先生で交換できた『ツインビーコンNEO』"
+    },
+    {
+      "videoId": "He6WTXUTtUw",
+      "addedHoursAgo": 133,
+      "rating": 60,
+      "title": "【ゆっくり解説】“目”が誕生した日"
+    },
+    {
+      "videoId": "Sib5XyKKPgU",
+      "addedHoursAgo": 149,
+      "title": "なぜ　ステーキはまず塩だけで食べるべきか？"
+    },
+    {
+      "videoId": "9wUxPOLPUIo",
+      "addedHoursAgo": 168,
+      "title": "【高橋弘樹vs民俗学者】妖怪の発生条件"
+    },
+    {
+      "videoId": "p82WZfswUkI",
+      "addedHoursAgo": 187,
+      "title": "Rosalina Evolution: Every Game Appearance"
+    },
+    {
+      "videoId": "HdsjC8s9zD8",
+      "addedHoursAgo": 205,
+      "title": "Star Fox Switch 2 vs Wii U"
+    },
+    {
+      "videoId": "f-F-z-a0fag",
+      "addedHoursAgo": 229,
+      "title": "Apple Watch、超高級ケースの世界。"
+    },
+    {
+      "videoId": "pQWeGUBvfAk",
+      "addedHoursAgo": 251,
+      "title": "フェルミのパラドックスと２つの解決方法"
+    },
+    {
+      "videoId": "-cPgRqI7p9U",
+      "addedHoursAgo": 276,
+      "title": "世界最小のアヒル【コールダック】"
+    },
+    {
+      "videoId": "oWJiAi71NBU",
+      "addedHoursAgo": 300,
+      "title": "100年前の映画のスタントがヤバすぎる"
+    },
+    {
+      "videoId": "Rw_SXw_Ciig",
+      "addedHoursAgo": 331,
+      "rating": 60,
+      "title": "【ゆっくり解説】なぜブラックホールからは光すら脱出不可能なのか"
+    },
+    {
+      "videoId": "3GoEoFI6FpM",
+      "addedHoursAgo": 372,
+      "title": "AIでキャラクターを固定して好きな画像を簡単に生成する方法"
+    },
+    {
+      "videoId": "IVdNp26TWhk",
+      "addedHoursAgo": 258,
+      "isTrashed": true,
+      "title": "【全篇】『禮儀作法』1930年"
+    }
+  ]
+}

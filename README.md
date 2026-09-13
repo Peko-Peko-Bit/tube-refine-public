@@ -6,7 +6,17 @@ TubeRefine is for everyone whose Watch Later list is where videos go to disappea
 
 **Live:** https://tube-refine.pekobit.com/
 
-<!-- TODO: add screenshots -->
+<p align="center">
+  <img src=".github/screenshots/save-from-youtube.webp" width="820" alt="Sharing a video from the YouTube app, tagging it in the add sheet, and the bookmark landing in the library">
+</p>
+
+<p align="center">
+  <img src=".github/screenshots/library.webp" width="235" alt="Library with AI tags, ratings and quick-filter chips">
+  <img src=".github/screenshots/video-summary.webp" width="235" alt="Generated video summary with an overview and key points">
+  <img src=".github/screenshots/filter-and-sort.webp" width="235" alt="Filter and sort sheet with duration, upload date and rating filters">
+</p>
+
+<p align="center"><sub>Saving straight from the YouTube share menu · the library, an on-demand video summary, and the filter sheet. Screens show the guest demo data.</sub></p>
 
 ## Features
 
@@ -73,11 +83,34 @@ Required keys in `.env.local`:
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase project |
 | `SUPABASE_SERVICE_ROLE_KEY` | server-side invocation of the ai-tagging Edge Function |
 | `OPENROUTER_API_KEY` | video summaries (Gemini via OpenRouter) |
+| `ALLOWED_EMAILS` | comma-separated allowlist for Google sign-in; unset rejects every Google sign-in (guest mode is unaffected) |
 
 Optional: `YOUTUBE_API_KEY` (rich metadata — channel, duration, tags, category), `GOOGLE_TRANSLATE_API_KEY` (English tag copies for cross-language search).
 
 Database schema and migrations live in [supabase/](supabase/). Deploy the tagging function with `supabase functions deploy ai-tagging`, then set its secrets: `supabase secrets set OPENROUTER_API_KEY=... GOOGLE_TRANSLATE_API_KEY=...`.
 
+### Access and rate limits
+
+Google sign-in is allowlisted via `ALLOWED_EMAILS`; everyone else uses the guest button, which signs in anonymously (enable **Allow anonymous sign-ins** in the Supabase dashboard).
+
+The routes that spend money — saving a bookmark, generating a summary, retrying AI tagging, re-fetching metadata — are rate limited by [`src/lib/rate-limit.ts`](src/lib/rate-limit.ts), backed by the `check_rate_limit()` function in [supabase/migrations/](supabase/migrations/):
+
+| | Window | save | summarize | retry | refetch |
+|---|---|---|---|---|---|
+| Guest, per account | 24h | 10 | 3 | 3 | 10 |
+| **Guest, all accounts combined** | 24h | **100** | **50** | — | — |
+| Signed in, per user | 1h | 60 | 30 | 30 | 60 |
+
+The combined guest budget is the one that bounds spend: anonymous accounts are free and unlimited, so a per-account cap alone resets whenever someone clears their cookies. Signed-in users never consult it, so guests exhausting the demo budget cannot lock the owner out.
+
+Guest accounts are deleted 24 hours after sign-in by `cleanup_guest_data()`, which pg_cron runs hourly. Deleting the account is the whole job — `bookmarks.user_id` cascades from `auth.users`, so the bookmarks go with it.
+
 ## Deployment
 
 Deployed on **Vercel** — push to `main` triggers a production build. Supabase hosts the database, auth, and the ai-tagging Edge Function. Google OAuth is configured in the Supabase dashboard with `<your-domain>/auth/callback` as the redirect URL.
+
+## About this repository
+
+This is a public mirror of the private repository TubeRefine is developed in. It is updated by snapshot, so the history here is one commit per sync rather than the development history, and a small number of files are not included. Issues and pull requests are welcome, but changes are applied upstream and arrive here with the next sync.
+
+Licensed under the [MIT License](LICENSE).

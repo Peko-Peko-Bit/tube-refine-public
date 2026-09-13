@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { parseVideoMetadata, translateToEnglish } from '@/lib/youtube';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 export async function POST(
   _req: Request,
@@ -25,6 +26,10 @@ export async function POST(
     if (fetchError || !bookmark) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
+
+    // Cheap per call, but it still spends YouTube quota and Translation characters
+    const limited = await enforceRateLimit(user, 'refetch');
+    if (limited) return limited;
 
     const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
     if (!YOUTUBE_API_KEY) {

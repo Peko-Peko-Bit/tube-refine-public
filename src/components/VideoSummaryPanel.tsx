@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Bookmark } from "@/lib/types/database";
+import { readSummaryLanguage } from "@/lib/video-summary";
 
 function timestampToSeconds(ts: string): number {
   const parts = ts.split(':').map(Number);
@@ -58,7 +59,11 @@ export default function VideoSummaryPanel({
     setIsLoading(true);
     setError(null);
     try {
-      const url = `/api/bookmarks/${bookmark.id}/summarize${force ? '?force=true' : ''}`;
+      // Read at call time rather than from state: the picker lives in the
+      // profile menu, so the preference can change while this panel is mounted.
+      const query = new URLSearchParams({ lang: readSummaryLanguage() });
+      if (force) query.set('force', 'true');
+      const url = `/api/bookmarks/${bookmark.id}/summarize?${query}`;
       const res = await fetch(url, { method: 'POST' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to generate summary');

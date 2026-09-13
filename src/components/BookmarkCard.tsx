@@ -75,17 +75,33 @@ export default function BookmarkCard({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  // Surfaces the reason a request was turned down (rate limits, mainly) instead
+  // of leaving the button looking like it did nothing.
+  const readError = async (res: Response) => {
+    try {
+      const data = await res.json();
+      setActionError(data.error || "Something went wrong. Please try again.");
+    } catch {
+      setActionError("Something went wrong. Please try again.");
+    }
+  };
 
   const handleRetry = async () => {
+    setActionError(null);
     const res = await fetch(`/api/bookmarks/${bookmark.id}/retry`, { method: "POST" });
     if (res.ok) router.refresh();
+    else await readError(res);
   };
 
   const handleRefetch = async () => {
     setIsRefetching(true);
+    setActionError(null);
     try {
       const res = await fetch(`/api/bookmarks/${bookmark.id}/refetch`, { method: "POST" });
       if (res.ok) router.refresh();
+      else await readError(res);
     } finally {
       setIsRefetching(false);
     }
@@ -227,6 +243,12 @@ export default function BookmarkCard({
               <span className="text-xs text-red-500">Analysis failed</span>
               <button onClick={handleRetry} className="text-xs text-neutral-500 underline self-start hover:text-black dark:hover:text-white">Retry</button>
             </div>
+          )}
+
+          {actionError && (
+            <p role="alert" className="text-[11px] text-amber-600 dark:text-amber-400 mt-1">
+              {actionError}
+            </p>
           )}
 
           {!isShort && !isSelectMode && (

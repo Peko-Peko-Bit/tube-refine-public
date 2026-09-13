@@ -6,16 +6,18 @@ import { Bookmark } from "@/lib/types/database";
 import BookmarkCard from "@/components/BookmarkCard";
 
 import ProfileMenu from "@/components/ProfileMenu";
-import { BookmarkIcon, Trash2, X, AlertTriangle, LayoutGrid, List, Search, SlidersHorizontal, ChevronDown, ArrowUp, ArrowDown } from "lucide-react";
+import { BookmarkIcon, Trash2, X, AlertTriangle, LayoutGrid, List, Search, SlidersHorizontal, ChevronDown, ArrowUp, ArrowDown, Info } from "lucide-react";
 import { trashBookmarks } from "@/app/actions";
 import BottomNav from "@/components/BottomNav";
 
-export default function DashboardClient({ 
-  bookmarks, 
-  avatarUrl 
-}: { 
-  bookmarks: Bookmark[]; 
+export default function DashboardClient({
+  bookmarks,
+  avatarUrl,
+  isGuest = false
+}: {
+  bookmarks: Bookmark[];
   avatarUrl?: string | null;
+  isGuest?: boolean;
 }) {
   const router = useRouter();
   const [isSelectMode, setIsSelectMode] = useState(false);
@@ -223,6 +225,16 @@ export default function DashboardClient({
           <ProfileMenu avatarUrl={avatarUrl} />
         </div>
       </header>
+
+      {isGuest && (
+        <div className="-mt-4 mb-6 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
+          <Info className="w-4 h-4 mt-0.5 shrink-0" />
+          <p>
+            You&rsquo;re browsing sample data. This guest account and everything
+            saved to it are deleted 24 hours after sign-in.
+          </p>
+        </div>
+      )}
 
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

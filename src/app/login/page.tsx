@@ -2,16 +2,30 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { BookmarkIcon } from "lucide-react";
 import LoginButton from "@/components/LoginButton";
+import GuestButton from "@/components/GuestButton";
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+const ERROR_MESSAGES: Record<string, string> = {
+  not_allowed:
+    "Google sign-in is limited to approved accounts. Try the app as a guest instead.",
+  auth: "Something went wrong while signing you in. Please try again.",
+};
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {
     redirect("/");
   }
+
+  const { error } = await searchParams;
+  const message = error ? ERROR_MESSAGES[error] : undefined;
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center justify-center p-6 gap-8">
@@ -27,7 +41,22 @@ export default async function LoginPage() {
         </p>
       </div>
 
-      <LoginButton />
+      {message && (
+        <p
+          role="alert"
+          className="max-w-xs text-center text-sm text-amber-700 dark:text-amber-400"
+        >
+          {message}
+        </p>
+      )}
+
+      <div className="flex flex-col items-center gap-3">
+        <LoginButton />
+        <GuestButton />
+        <p className="text-xs text-neutral-500">
+          Guest data is deleted after 24 hours.
+        </p>
+      </div>
     </main>
   );
 }

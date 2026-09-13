@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 export async function POST(
   req: Request,
@@ -31,6 +32,10 @@ export async function POST(
     if (bookmark.ai_status !== 'failed') {
       return NextResponse.json({ error: 'Only failed bookmarks can be retried' }, { status: 400 });
     }
+
+    // Checked after the 'failed' guard so a no-op retry never costs quota
+    const limited = await enforceRateLimit(user, 'retry');
+    if (limited) return limited;
 
     // Only reset AI-generated fields; preserve YouTube-sourced data (tags, category, channel_name etc.)
     const { data: updated, error: updateError } = await supabase

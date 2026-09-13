@@ -2,6 +2,7 @@ import { NextResponse, after } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { parseVideoMetadata, translateToEnglish } from '@/lib/youtube';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
 
@@ -27,6 +28,10 @@ export async function POST(req: Request) {
     if (!video_id) {
       return NextResponse.json({ error: 'Invalid YouTube URL' }, { status: 400 });
     }
+
+    // Checked after validation so a malformed URL never costs anyone their quota
+    const limited = await enforceRateLimit(user, 'save');
+    if (limited) return limited;
 
     const isShort = url.includes('/shorts/');
     const finalUrl = isShort
